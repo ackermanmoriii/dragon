@@ -3,324 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragon Files</title>
+    <title>سیستم مدیریت کانفیگ</title>
     <style>
-        /* Brutalist Style */
+        /* Brutalist CSS - سبک بروتالیست */
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --red: #FF0000;
+            --gray: #333333;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Courier New', monospace;
         }
         
         body {
-            font-family: monospace;
-            background: #000;
-            color: #fff;
-            padding: 20px;
-            border: 10px solid #f00;
+            background-color: var(--black);
+            color: var(--white);
+            padding: 0;
             min-height: 100vh;
+            border: 15px solid var(--red);
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
             text-align: center;
-            padding: 30px 0;
-            border-bottom: 5px solid #f00;
+            padding: 40px 20px;
+            border-bottom: 8px solid var(--red);
+            background-color: #111;
             margin-bottom: 40px;
         }
         
         h1 {
-            font-size: 3em;
+            font-size: 4rem;
             text-transform: uppercase;
-            letter-spacing: 10px;
-            color: #f00;
-            text-shadow: 5px 5px 0 #333;
+            letter-spacing: 8px;
+            color: var(--red);
+            text-shadow: 6px 6px 0 var(--gray);
+            margin-bottom: 20px;
         }
         
-        .status {
+        .subtitle {
+            font-size: 1.3rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+        
+        .control-panel {
             background: #111;
-            padding: 20px;
-            border: 3px solid #fff;
-            margin-bottom: 30px;
-            font-size: 1.2em;
-        }
-        
-        .files-grid {
+            padding: 30px;
+            border: 6px solid var(--white);
+            margin-bottom: 40px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
         }
         
-        .file-card {
-            background: #222;
+        .status-box {
             padding: 20px;
-            border: 3px solid #f00;
+            border: 3px solid var(--gray);
+        }
+        
+        .status-title {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .status-value {
+            color: var(--red);
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .button {
+            padding: 20px 30px;
+            background: var(--red);
+            color: var(--black);
+            border: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            border: 4px solid var(--red);
+        }
+        
+        .button:hover {
+            background: transparent;
+            color: var(--red);
+        }
+        
+        .button:disabled {
+            background: var(--gray);
+            border-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .files-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .file-item {
+            background: #111;
+            border: 4px solid var(--white);
+            padding: 25px;
             transition: all 0.3s;
         }
         
-        .file-card:hover {
-            border-color: #fff;
-            transform: translateY(-5px);
+        .file-item:hover {
+            border-color: var(--red);
+            transform: translateY(-8px);
+        }
+        
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--gray);
         }
         
         .file-name {
-            font-size: 1.5em;
-            color: #f00;
-            margin-bottom: 10px;
+            color: var(--red);
+            font-size: 1.6rem;
             font-weight: bold;
         }
         
-        .download-btn {
-            display: inline-block;
-            background: #f00;
-            color: #000;
-            padding: 10px 20px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 10px;
-            border: 2px solid #f00;
-            transition: all 0.3s;
+        .file-size {
+            color: #888;
+            font-size: 0.9rem;
         }
         
-        .download-btn:hover {
+        .file-preview {
             background: #000;
-            color: #f00;
-        }
-        
-        .preview {
-            background: #000;
-            padding: 10px;
-            margin: 10px 0;
-            max-height: 150px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
             overflow-y: auto;
-            border: 1px solid #333;
-            font-size: 0.9em;
+            border: 2px solid var(--gray);
+            font-size: 0.85rem;
+            line-height: 1.4;
             white-space: pre-wrap;
             word-break: break-all;
         }
         
-        .hidden {
-            display: none;
+        .download-link {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            background: var(--gray);
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+            border: 3px solid var(--gray);
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        
+        .download-link:hover {
+            background: transparent;
+            color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.8rem;
+            color: var(--red);
+            border: 6px solid var(--red);
+            margin: 30px 0;
         }
         
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #f00;
-            color: #000;
-            padding: 15px;
-            border: 3px solid #fff;
+            top: 30px;
+            right: 30px;
+            padding: 25px 35px;
+            background: var(--red);
+            color: var(--black);
             font-weight: bold;
-            z-index: 1000;
+            font-size: 1.2rem;
+            border: 6px solid var(--white);
+            z-index: 10000;
+            max-width: 400px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: var(--gray);
+            border: 3px solid var(--white);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--red);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 8px solid var(--red);
+            margin-top: 60px;
+            color: #888;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
-            .files-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2em;
-                letter-spacing: 5px;
-            }
+            h1 { font-size: 2.5rem; }
+            .control-panel { grid-template-columns: 1fr; }
+            .files-container { grid-template-columns: 1fr; }
+            .container { padding: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Dragon Files</h1>
-            <p style="color: #888; margin-top: 10px;">اتصال مستقیم - بدون سرور میانی</p>
+            <h1>کانفیگ دراگون</h1>
+            <p class="subtitle">سیستم مدیریت و به‌روزرسانی خودکار</p>
         </header>
         
-        <div class="status">
-            <div>آخرین بروزرسانی: <span id="lastUpdate">در حال بارگذاری...</span></div>
-            <div>تعداد فایل‌های موجود: <span id="fileCount">0</span></div>
-            <div>بروزرسانی بعدی: <span id="nextUpdate">--:--:--</span></div>
+        <div class="control-panel">
+            <div class="status-box">
+                <div class="status-title">آخرین به‌روزرسانی</div>
+                <div id="lastUpdate" class="status-value">هرگز</div>
+            </div>
+            
+            <div class="status-box">
+                <div class="status-title">تعداد فایل‌ها</div>
+                <div id="fileCount" class="status-value">0</div>
+            </div>
+            
+            <div class="status-box">
+                <div class="status-title">به‌روزرسانی بعدی</div>
+                <div id="nextUpdate" class="status-value">--:--:--</div>
+            </div>
+            
+            <div>
+                <button class="button" id="processBtn" onclick="processAllFiles()">
+                    پردازش فایل‌ها
+                </button>
+            </div>
+            
+            <div>
+                <button class="button" id="downloadAllBtn" onclick="downloadAllFiles()" disabled>
+                    دانلود همه
+                </button>
+            </div>
         </div>
         
-        <div class="files-grid" id="filesContainer">
+        <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div style="text-align: center; color: #888; margin-bottom: 20px;" id="progressText">
+            آماده برای پردازش
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">
+            در حال پردازش فایل‌ها... لطفا منتظر بمانید
+        </div>
+        
+        <div id="filesContainer" class="files-container">
             <!-- فایل‌های dragon اینجا نمایش داده می‌شوند -->
         </div>
         
-        <div style="text-align: center; margin-top: 50px; color: #888; font-size: 0.9em;">
-            تمامی فرآیندها به صورت خودکار و در پس‌زمینه انجام می‌شوند
-        </div>
+        <footer>
+            <p>سیستم به‌روزرسانی خودکار | هر ۱ ساعت به‌روز می‌شود</p>
+            <p>تمامی فرآیندها در پس‌زمینه انجام می‌شوند</p>
+        </footer>
     </div>
 
-    <!-- داده‌های ثابت که از منبع دریافت شده‌اند -->
-    <div class="hidden" id="sourceData">
-        <!-- این بخش شامل داده‌های از پیش دریافت شده است -->
-        <!-- در واقعیت، این داده‌ها باید از طریق روش‌های دیگر دریافت شوند -->
-        <!-- اما برای نمایش نمونه، چند نمونه داده ثابت قرار داده‌ایم -->
-        
-        <div class="data-source" data-file="dragon01">
-            vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICJDT05GSUcxIiwKICAiYWRkIjogImV4YW1wbGUuY29tIiwKICAicG9ydCI6ICI0NDMiLAogICJpZCI6ICIxMjM0NTY3OC05YWJjLTEyMzQtYWJjZC0xMjM0NTY3ODlhYmMiLAogICJhaWQiOiAiMCIsCiAgIm5ldCI6ICJ3cyIsCiAgInR5cGUiOiAibm9uZSIsCiAgImhvc3QiOiAiIiwKICAicGF0aCI6ICIvcGF0aCIsCiAgInRscyI6ICJ0bHMiCn0=
-        </div>
-        
-        <div class="data-source" data-file="dragon02">
-            dmxlc3M6Ly8xMjM0NTY3OUBleGFtcGxlLmNvbToxMjM0P3R5cGU9d3MmcGF0aD0vcGF0aCZzZWN1cml0eT10bHMmYWxwbj1odHRwLzEuMQ==
-        </div>
-        
-        <div class="data-source" data-file="dragon03">
-            c3M6Ly9hYmNkQGV4YW1wbGUuY29tOjEyMzQjU0VDUkVU
-        </div>
-    </div>
+    <!-- داده‌های نمونه برای 68 فایل -->
+    <script id="sampleData" type="application/json">
+        {
+            "files": {
+                "dragon01.txt": "vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICJDT05GSUcxIiwKICAiYWRkIjogImV4YW1wbGUxLmNvbSIsCiAgInBvcnQiOiAiNDQzIiwKICAiaWQiOiAiMTIzNDU2Nzg5YWJjLTEyMzQtYWJjZDEyMzQ1Njc4OWFiYyIsCiAgImFpZCI6ICIwIiwKICAibmV0IjogIndzIiwKICAidHlwZSI6ICJub25lIiwKICAiaG9zdCI6ICIiLAogICJwYXRoIjogIi9wYXRoIiwKICAidGxzIjogInRscyIKfQ==",
+                "dragon02.txt": "dmxlc3M6Ly8xMjM0NTY3ODlAYnVsa3YycmF5LmNvbToxMjM0P3R5cGU9d3MmcGF0aD0vc3VicyZzZWN1cml0eT10bHMmYWxwbj1odHRwLzEuMQ==",
+                "dragon03.txt": "c3M6Ly9hYmNkZWVmQGJ1bGt2MnJheS5jb206MTIzNCNTZWNyZXQ=",
+                "dragon04.txt": "dHJvamFuOi8vMTIzNDU2Nzg5YWJjQGJ1bGt2MnJheS5jb206NDQzP3NuYT1idWxrdjJyYXkuY29tI3NlY3JldA==",
+                "dragon05.txt": "dHVpYzovLzEyMzQ1Njc4OWFiY0BidWxrdjJyYXkuY29tOjEyMzQ/cGF0aD0vdHVpYyZhbHBuPWh0dHAvMS4x",
+                "dragon06.txt": "c3NyOi8vMTIzNDU2Nzg5YWJjQGJ1bGt2MnJheS5jb206MTIzND9wYXRoPS9zc3ImZW5jcnlwdGlvbj1hZXMtMjU2LWNmYiZvYmZzPXBsYWlu",
+                "dragon07.txt": "dm1lc3M6Ly9leGFtcGxlNy5jb20vIyBWbWVzcyBDb25maWcgNw==",
+                "dragon08.txt": "dmxlc3M6Ly9leGFtcGxlOC5uZXQvIyBWbGVzcyBDb25maWcgOA==",
+                "dragon09.txt": "c3M6Ly9leGFtcGxlOS5vcmcjIFNoYWRvd3NvY2tzIDk=",
+                "dragon10.txt": "dHJvamFuOi8vZXhhbXBsZTEwLmNvbSMgVHJvamFuIDEw"
+            }
+        }
+    </script>
 
     <script>
-        // مخفی کردن تمام اطلاعات مربوط به منبع
-        const SOURCE_FILES = {
-            'dragon01.txt': 'Sub1.txt',
-            'dragon02.txt': 'Sub2.txt', 
-            'dragon03.txt': 'Sub3.txt',
-            'dragon04.txt': 'Sub4.txt',
-            'dragon05.txt': 'Sub5.txt',
-            'dragon06.txt': 'Sub6.txt',
-            'dragon07.txt': 'Sub7.txt',
-            'dragon08.txt': 'Sub8.txt',
-            'dragon09.txt': 'Sub9.txt',
-            'dragon10.txt': 'Sub10.txt'
-        };
-
-        // ذخیره‌سازی محلی برای فایل‌ها
+        // متغیرهای اصلی
+        const MAX_FILES = 68;
         let dragonFiles = {};
         let lastUpdateTime = null;
         let updateInterval = null;
-
+        let isProcessing = false;
+        
         // DOM Elements
         const filesContainer = document.getElementById('filesContainer');
         const lastUpdateEl = document.getElementById('lastUpdate');
         const fileCountEl = document.getElementById('fileCount');
         const nextUpdateEl = document.getElementById('nextUpdate');
-
-        // تابع اصلی برای بارگذاری فایل‌ها
-        function loadDragonFiles() {
-            // ابتدا از localStorage چک می‌کنیم
-            const savedFiles = localStorage.getItem('dragonFiles');
-            const savedTime = localStorage.getItem('lastUpdateTime');
+        const loadingEl = document.getElementById('loading');
+        const processBtn = document.getElementById('processBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        
+        // تابع اصلی برای پردازش 68 فایل
+        async function processAllFiles() {
+            if (isProcessing) return;
             
-            if (savedFiles && savedTime) {
-                dragonFiles = JSON.parse(savedFiles);
-                lastUpdateTime = new Date(savedTime);
-                displayFiles();
-                updateStatus();
+            isProcessing = true;
+            processBtn.disabled = true;
+            loadingEl.style.display = 'block';
+            dragonFiles = {};
+            
+            showNotification('شروع پردازش 68 فایل...');
+            
+            // شبیه‌سازی پردازش 68 فایل
+            for (let i = 1; i <= MAX_FILES; i++) {
+                // به‌روزرسانی پیشرفت
+                const progress = Math.round((i / MAX_FILES) * 100);
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `در حال پردازش فایل ${i} از ${MAX_FILES} (${progress}%)`;
                 
-                // اگر بیش از 1 ساعت از آخرین بروزرسانی گذشته باشد
-                const now = new Date();
-                const hoursDiff = (now - lastUpdateTime) / (1000 * 60 * 60);
+                // ایجاد نام فایل dragon
+                const dragonFileName = `dragon${i.toString().padStart(2, '0')}.txt`;
                 
-                if (hoursDiff >= 1) {
-                    // زمان بروزرسانی رسیده
-                    simulateBackgroundUpdate();
-                }
-            } else {
-                // اولین بار است - داده‌های اولیه را بارگذاری کن
-                initializeWithSampleData();
+                // شبیه‌سازی محتوای فایل Sub متناظر
+                const subContent = generateSubFileContent(i);
+                
+                // ذخیره در dragon file
+                dragonFiles[dragonFileName] = subContent;
+                
+                // تأخیر برای شبیه‌سازی پردازش
+                await delay(50);
             }
-        }
-
-        // تابع برای شبیه‌سازی بروزرسانی در پس‌زمینه
-        function simulateBackgroundUpdate() {
-            // این تابع به صورت خودکار فراخوانی می‌شود
-            console.log('بروزرسانی خودکار در حال اجرا...');
             
-            // شبیه‌سازی دریافت داده‌های جدید
+            // ذخیره در localStorage
+            lastUpdateTime = new Date();
+            localStorage.setItem('dragonFiles_v2', JSON.stringify(dragonFiles));
+            localStorage.setItem('lastUpdateTime_v2', lastUpdateTime.toISOString());
+            
+            // به‌روزرسانی UI
+            updateFileDisplay();
+            updateStatusPanel();
+            
+            // فعال کردن دکمه دانلود همه
+            downloadAllBtn.disabled = false;
+            
+            // پنهان کردن loading
+            loadingEl.style.display = 'none';
+            processBtn.disabled = false;
+            isProcessing = false;
+            
+            // نمایش نوتیفیکیشن
+            showNotification(`68 فایل با موفقیت پردازش شدند`);
+            
+            // راه‌اندازی تایمر بروزرسانی خودکار
+            startAutoUpdateTimer();
+            
+            // ریست کردن progress bar
             setTimeout(() => {
-                // در واقعیت اینجا داده‌های جدید دریافت می‌شوند
-                // اما برای نمونه، داده‌های ثابت را استفاده می‌کنیم
-                
-                // ایجاد تغییرات کوچک در داده‌های موجود (شبیه‌سازی بروزرسانی)
-                for (const fileName in dragonFiles) {
-                    if (Math.random() > 0.5) { // 50% شانس تغییر هر فایل
-                        dragonFiles[fileName] = generateUpdatedContent();
-                    }
-                }
-                
-                // اضافه کردن فایل‌های جدید (شبیه‌سازی)
-                const fileCount = Object.keys(dragonFiles).length;
-                if (fileCount < 15) {
-                    const newFileNum = fileCount + 1;
-                    const newFileName = `dragon${newFileNum.toString().padStart(2, '0')}.txt`;
-                    dragonFiles[newFileName] = generateNewContent();
-                }
-                
-                // ذخیره‌سازی
-                lastUpdateTime = new Date();
-                localStorage.setItem('dragonFiles', JSON.stringify(dragonFiles));
-                localStorage.setItem('lastUpdateTime', lastUpdateTime.toISOString());
-                
-                // به‌روزرسانی نمایش
-                displayFiles();
-                updateStatus();
-                
-                // نمایش نوتیفیکیشن
-                showNotification('فایل‌ها به‌روزرسانی شدند');
-                
-            }, 2000); // تاخیر برای شبیه‌سازی زمان دانلود
+                progressFill.style.width = '0%';
+                progressText.textContent = 'پردازش کامل شد';
+            }, 1000);
         }
-
-        // تابع برای نمایش فایل‌ها
-        function displayFiles() {
+        
+        // تابع برای تولید محتوای فایل Sub (شبیه‌سازی شده)
+        function generateSubFileContent(fileNumber) {
+            const protocols = ['vmess', 'vless', 'trojan', 'ss', 'ssr', 'tuic'];
+            const protocol = protocols[Math.floor(Math.random() * protocols.length)];
+            
+            // تولید چندین کانفیگ در هر فایل (بین 50 تا 200)
+            const configCount = 50 + Math.floor(Math.random() * 150);
+            let content = '';
+            
+            for (let j = 0; j < configCount; j++) {
+                const configNum = j + 1;
+                
+                // تولید کانفیگ بر اساس پروتکل
+                switch(protocol) {
+                    case 'vmess':
+                        content += `vmess://ewogICJ2IjogIjIiLAogICJwcyI6ICJDb25maWcgJ2YkZmlsZU51bWJlciAtICR7Y29uZmlnTnVtfSIsCiAgImFkZCI6ICJzZXJ2ZXIke2ZpbGVOdW1iZXJ9LmJ1bGt2MnJheS5jb20iLAogICJwb3J0IjogIjQ0MyIsCiAgImlkIjogIiR7Z2VuVXVpZCgpfSIsCiAgImFpZCI6ICIwIiwKICAibmV0IjogIndzIiwKICAidHlwZSI6ICJub25lIiwKICAiaG9zdCI6ICIiLAogICJwYXRoIjogIi9wYXRoJHtmaWxlTnVtYmVyfSIsCiAgInRscyI6ICJ0bHMiCn0K\n`;
+                        break;
+                        
+                    case 'vless':
+                        content += `vless://${genUuid()}@server${fileNumber}.bulkv2ray.com:443?type=ws&path=/vless${fileNumber}&security=tls&alpn=http/1.1#Config_${fileNumber}_${configNum}\n`;
+                        break;
+                        
+                    case 'trojan':
+                        content += `trojan://${genRandomString(16)}@trojan${fileNumber}.bulkv2ray.com:443?security=tls&alpn=h2&type=tcp#Trojan_${fileNumber}_${configNum}\n`;
+                        break;
+                        
+                    case 'ss':
+                        const method = ['aes-256-gcm', 'chacha20-ietf-poly1305', 'aes-128-gcm'][Math.floor(Math.random() * 3)];
+                        const password = genRandomString(12);
+                        content += `ss://${btoa(`${method}:${password}`)}@ss${fileNumber}.bulkv2ray.com:8388#Shadowsocks_${fileNumber}_${configNum}\n`;
+                        break;
+                        
+                    default:
+                        content += `${protocol}://${genUuid()}@server${fileNumber}.bulkv2ray.com:443#${protocol}_${fileNumber}_${configNum}\n`;
+                }
+                
+                // اضافه کردن خط جدید بین کانفیگ‌ها
+                if (j < configCount - 1) {
+                    content += '\n';
+                }
+            }
+            
+            return content;
+        }
+        
+        // تابع برای به‌روزرسانی نمایش فایل‌ها
+        function updateFileDisplay() {
             filesContainer.innerHTML = '';
             
             const fileNames = Object.keys(dragonFiles).sort();
             
-            fileNames.forEach(fileName => {
-                const content = dragonFiles[fileName];
-                const preview = content.length > 200 ? content.substring(0, 200) + '...' : content;
-                
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card';
-                fileCard.innerHTML = `
-                    <div class="file-name">${fileName}</div>
-                    <div class="preview">${escapeHtml(preview)}</div>
-                    <div style="margin-top: 15px;">
-                        <a href="#" class="download-btn" onclick="downloadFile('${fileName}')">دانلود</a>
-                        <span style="color: #888; font-size: 0.9em; margin-right: 15px;">
-                            ${formatBytes(content.length)}
-                        </span>
+            if (fileNames.length === 0) {
+                filesContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: #111; border: 6px solid #333;">
+                        <h3 style="color: #888; margin-bottom: 20px; font-size: 1.8rem;">هیچ فایلی یافت نشد</h3>
+                        <p style="color: #666;">روی دکمه "پردازش فایل‌ها" کلیک کنید</p>
                     </div>
                 `;
+                return;
+            }
+            
+            fileNames.forEach(fileName => {
+                const content = dragonFiles[fileName];
+                const fileSize = content.length;
+                const sizeKB = (fileSize / 1024).toFixed(1);
                 
-                filesContainer.appendChild(fileCard);
+                // پیش‌نمایش 300 کاراکتر اول
+                const preview = content.length > 300 
+                    ? content.substring(0, 300) + '...' 
+                    : content;
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div class="file-header">
+                        <div class="file-name">${fileName}</div>
+                        <div class="file-size">${sizeKB} KB</div>
+                    </div>
+                    <div class="file-preview">${escapeHtml(preview)}</div>
+                    <a href="#" class="download-link" onclick="downloadSingleFile('${fileName}'); return false;">
+                        دانلود ${fileName}
+                    </a>
+                `;
+                
+                filesContainer.appendChild(fileItem);
             });
             
             fileCountEl.textContent = fileNames.length;
         }
-
-        // تابع برای دانلود فایل
-        function downloadFile(fileName) {
+        
+        // تابع برای دانلود یک فایل
+        function downloadSingleFile(fileName) {
             const content = dragonFiles[fileName];
-            if (!content) return;
+            if (!content) {
+                showNotification('فایل یافت نشد');
+                return;
+            }
             
-            const blob = new Blob([content], { type: 'text/plain' });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             URL.revokeObjectURL(url);
             
-            showNotification(`فایل ${fileName} دانلود شد`);
+            showNotification(`${fileName} دانلود شد`);
         }
-
-        // تابع برای به‌روزرسانی وضعیت
-        function updateStatus() {
+        
+        // تابع برای دانلود همه فایل‌ها (ZIP)
+        function downloadAllFiles() {
+            if (Object.keys(dragonFiles).length === 0) {
+                showNotification('هیچ فایلی برای دانلود وجود ندارد');
+                return;
+            }
+            
+            showNotification('در حال آماده‌سازی فایل‌ها برای دانلود...');
+            
+            // ایجاد یک ZIP مجازی (در واقعیت نیاز به کتابخانه JSZip داریم)
+            // برای سادگی، هر فایل را جداگانه دانلود می‌کنیم
+            let downloaded = 0;
+            const totalFiles = Object.keys(dragonFiles).length;
+            
+            Object.keys(dragonFiles).forEach((fileName, index) => {
+                setTimeout(() => {
+                    downloadSingleFile(fileName);
+                    downloaded++;
+                    
+                    if (downloaded === totalFiles) {
+                        showNotification('تمام فایل‌ها دانلود شدند');
+                    }
+                }, index * 500); // تأخیر 500ms بین هر دانلود
+            });
+        }
+        
+        // تابع برای به‌روزرسانی پنل وضعیت
+        function updateStatusPanel() {
             if (lastUpdateTime) {
-                const options = { 
-                    year: 'numeric', 
-                    month: '2-digit', 
+                const options = {
+                    year: 'numeric',
+                    month: '2-digit',
                     day: '2-digit',
-                    hour: '2-digit', 
+                    hour: '2-digit',
                     minute: '2-digit',
+                    second: '2-digit',
                     hour12: false
                 };
                 lastUpdateEl.textContent = lastUpdateTime.toLocaleDateString('fa-IR', options);
@@ -328,80 +547,98 @@
             
             // محاسبه زمان بروزرسانی بعدی
             if (lastUpdateTime) {
-                const nextUpdate = new Date(lastUpdateTime.getTime() + 60 * 60 * 1000);
+                const nextUpdateTime = new Date(lastUpdateTime.getTime() + 60 * 60 * 1000);
                 const now = new Date();
-                const diff = nextUpdate - now;
+                const diff = nextUpdateTime - now;
                 
                 if (diff > 0) {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                    nextUpdateEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    nextUpdateEl.textContent = 
+                        `${hours.toString().padStart(2, '0')}:` +
+                        `${minutes.toString().padStart(2, '0')}:` +
+                        `${seconds.toString().padStart(2, '0')}`;
                 } else {
                     nextUpdateEl.textContent = 'به زودی...';
                 }
             }
         }
-
-        // تابع برای مقداردهی اولیه با داده‌های نمونه
-        function initializeWithSampleData() {
-            // استفاده از داده‌های ثابت در HTML
-            const sourceData = document.getElementById('sourceData');
-            const dataElements = sourceData.querySelectorAll('.data-source');
-            
-            dataElements.forEach(el => {
-                const fileName = `${el.getAttribute('data-file')}.txt`;
-                dragonFiles[fileName] = el.textContent.trim();
-            });
-            
-            // اضافه کردن فایل‌های بیشتر
-            for (let i = 4; i <= 10; i++) {
-                const fileName = `dragon${i.toString().padStart(2, '0')}.txt`;
-                dragonFiles[fileName] = generateNewContent();
-            }
-            
-            lastUpdateTime = new Date();
-            
-            // ذخیره در localStorage
-            localStorage.setItem('dragonFiles', JSON.stringify(dragonFiles));
-            localStorage.setItem('lastUpdateTime', lastUpdateTime.toISOString());
-            
-            displayFiles();
-            updateStatus();
-            
-            // شروع تایمر برای بروزرسانی خودکار
-            startAutoUpdateTimer();
-        }
-
-        // تابع برای شروع تایمر بروزرسانی خودکار
+        
+        // تابع برای راه‌اندازی تایمر بروزرسانی خودکار
         function startAutoUpdateTimer() {
-            // حذف interval قبلی اگر وجود دارد
+            // پاک کردن interval قبلی
             if (updateInterval) {
                 clearInterval(updateInterval);
             }
             
             // تنظیم interval جدید (هر 1 ساعت)
             updateInterval = setInterval(() => {
-                simulateBackgroundUpdate();
-            }, 60 * 60 * 1000); // 1 ساعت
+                // شبیه‌سازی بروزرسانی خودکار
+                simulateAutoUpdate();
+            }, 60 * 60 * 1000);
             
-            // همچنین هر دقیقه وضعیت را چک کن
-            setInterval(updateStatus, 60000);
+            // همچنین هر ثانیه وضعیت را به‌روز کن
+            setInterval(updateStatusPanel, 1000);
         }
-
+        
+        // تابع برای شبیه‌سازی بروزرسانی خودکار
+        function simulateAutoUpdate() {
+            console.log('بروزرسانی خودکار در حال اجرا...');
+            
+            // تغییر تصادفی 30% از فایل‌ها
+            Object.keys(dragonFiles).forEach(fileName => {
+                if (Math.random() < 0.3) { // 30% شانس تغییر
+                    const fileNum = parseInt(fileName.match(/\d+/)[0]);
+                    dragonFiles[fileName] = generateSubFileContent(fileNum);
+                }
+            });
+            
+            // ذخیره به‌روزرسانی
+            lastUpdateTime = new Date();
+            localStorage.setItem('dragonFiles_v2', JSON.stringify(dragonFiles));
+            localStorage.setItem('lastUpdateTime_v2', lastUpdateTime.toISOString());
+            
+            // به‌روزرسانی نمایش
+            updateFileDisplay();
+            updateStatusPanel();
+            
+            showNotification('بروزرسانی خودکار انجام شد');
+        }
+        
+        // تابع بارگذاری اولیه
+        function loadInitialData() {
+            // چک کردن localStorage
+            const savedFiles = localStorage.getItem('dragonFiles_v2');
+            const savedTime = localStorage.getItem('lastUpdateTime_v2');
+            
+            if (savedFiles && savedTime) {
+                dragonFiles = JSON.parse(savedFiles);
+                lastUpdateTime = new Date(savedTime);
+                updateFileDisplay();
+                updateStatusPanel();
+                downloadAllBtn.disabled = false;
+                
+                // اگر بیش از 1 ساعت گذشته، بروزرسانی خودکار
+                const now = new Date();
+                const hoursDiff = (now - lastUpdateTime) / (1000 * 60 * 60);
+                
+                if (hoursDiff >= 1) {
+                    setTimeout(simulateAutoUpdate, 5000);
+                }
+                
+                startAutoUpdateTimer();
+            } else {
+                // استفاده از داده‌های نمونه
+                const sampleData = JSON.parse(document.getElementById('sampleData').textContent);
+                dragonFiles = sampleData.files;
+                updateFileDisplay();
+                updateStatusPanel();
+            }
+        }
+        
         // توابع کمکی
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatBytes(bytes) {
-            if (bytes < 1024) return bytes + ' بایت';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' کیلوبایت';
-            return (bytes / (1024 * 1024)).toFixed(2) + ' مگابایت';
-        }
-
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -409,45 +646,50 @@
             document.body.appendChild(notification);
             
             setTimeout(() => {
-                notification.remove();
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
-
-        // توابع برای تولید محتوای نمونه
-        function generateNewContent() {
-            const protocols = ['vmess', 'vless', 'trojan', 'ss'];
-            const protocol = protocols[Math.floor(Math.random() * protocols.length)];
-            
-            // تولید یک کد base64 تصادفی
-            const randomString = btoa(Date.now() + Math.random().toString());
-            const truncatedString = randomString.substring(0, 50 + Math.floor(Math.random() * 100));
-            
-            return `${protocol}://${truncatedString}`;
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        function generateUpdatedContent() {
-            // مشابه generateNewContent اما با داده‌های کمی متفاوت
-            return generateNewContent();
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
-
+        
+        function genUuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+        
+        function genRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
         // راه‌اندازی اولیه
         document.addEventListener('DOMContentLoaded', function() {
-            loadDragonFiles();
-            startAutoUpdateTimer();
+            loadInitialData();
             
             // نمایش پیام خوش‌آمد
             setTimeout(() => {
-                showNotification('سیستم آماده است. فایل‌ها هر 1 ساعت به‌روز می‌شوند.');
-            }, 1000);
+                showNotification('سیستم آماده است. 68 فایل قابل پردازش هستند.');
+            }, 1500);
         });
-
-        // همچنین می‌توانیم یک API endpoint ساده شبیه‌سازی کنیم
-        // این فقط برای نمایش است و در واقعیت کار نمی‌کند
-        window.simulateFetch = function() {
-            console.log('درخواست شبیه‌سازی شده برای داده‌های جدید');
-            simulateBackgroundUpdate();
-            return true;
-        };
+        
+        // نکته مهم: برای دریافت واقعی از GitHub، باید از یک backend استفاده کنید
+        // این کد فقط شبیه‌سازی می‌کند
     </script>
 </body>
 </html>
